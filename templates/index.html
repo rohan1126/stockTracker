@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stocks Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style.css">
+    <!-- Add any other CSS or stylesheets you need -->
+
+</head>
+<body>
+    <div class="container">
+        <h1>Stocks Dashboard</h1>
+            <!-- News Carousel -->
+        <div>
+            <div id="newsCarousel" class="carousel slide news-carousel" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for news in news_headlines %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="{{ news.image }}" class="d-block w-100 img-fluid" alt="News Image">
+                            <div>
+                                <h5 class="text-wrap">{{ news.headline | safe }}</h5>
+                                <p class="text-wrap">{{ news.summary }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Carousel controls with max-width -->
+                <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#newsCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+    <div class="search-form">
+        <form action="{{ url_for('add_stock') }}" method="post" class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control search-input" id="symbol" name="symbol" placeholder="Enter Stock Symbol" required>
+            </div>
+            <button type="submit" class="btn btn-primary add-button">Add</button>
+        </form>
+
+        <form action="{{ url_for('clear_stocks') }}" method="post" class="form-inline">
+            <button type="submit" class="btn btn-danger clear-button">Clear</button>
+        </form>
+    </div>
+
+        <!-- Stock Cards -->
+        <div class="row">
+            {% for stock in live_stock_prices %}
+                <div class="col-md-3">
+                    <div class="card stock-card">
+                        <div class="card-body stock-card-body" style="background-color: {{ stock.color }}">
+                            <img src="{{ stock.logo }}" alt="{{ stock.symbol }} Logo" class="img-fluid mb-2">
+                            <a href={{stock.stock_link}} target = "_blank"> {{ stock.symbol }}</a>
+                            <p>Close Price: {{ stock.close_price }}</p>
+                            <p>Current Price: {{ stock.current_price }}</p>
+<!--                            <p>Buy: {{ stock.buy_values }}</p>-->
+<!--                            <p>Sell: {{ stock.sell_values }}</p>-->
+                            <form action="{{ url_for('remove_stock', symbol=stock.symbol) }}" method="post">
+                                <button type="submit" class="close-btn">Remove Stock</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+    </div>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+    function removeStock(symbol) {
+        alert('Removing stock: ' + symbol);
+        window.location.href = '/remove_stock/' + symbol;
+    }
+
+
+    </script>
+    <!-- Add any other JavaScript scripts you need -->
+</body>
+</html>
